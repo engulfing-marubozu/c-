@@ -1,0 +1,3 @@
+/mnt/c/Users/rahul.raj/oop/Templates/build/CMakeFiles/template.dir
+/mnt/c/Users/rahul.raj/oop/Templates/build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/rahul.raj/oop/Templates/build/CMakeFiles/rebuild_cache.dir
