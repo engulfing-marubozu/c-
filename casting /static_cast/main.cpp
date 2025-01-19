@@ -32,12 +32,13 @@ int main(){
     double e = (int)a + 10.5; // explicit conversion using C-style cast
     double f = static_cast<int>(a) + 10.5; // explicit conversion using static_cast
 
-    Base *b1 = new Base();
+    Base *b1 = new DerivedOne();  
     try{
     std::cout<<static_cast<DerivedOne*>(b1)<<std::endl; // explicit conversion using static_cast
     DerivedOne *d1 =  static_cast<DerivedOne*>(b1); // explicit conversion using static_cast
     DerivedTwo *d2 =  (DerivedTwo*)b1; // c-style cast
     d1-> print();   // method hiding and not method overriding
+    std::cout<<d1->value<<std::endl;
     d2->print("hello all");
     }
     catch(std::exception &e){
