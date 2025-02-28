@@ -76,7 +76,11 @@
         "numbers": "cpp",
         "semaphore": "cpp",
         "stop_token": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "any": "cpp",
+        "charconv": "cpp",
+        "coroutine": "cpp",
+        "source_location": "cpp"
     },
-    "cmake.sourceDirectory": "/root/Projects/c-/Templates"
+    "cmake.sourceDirectory": "/root/Projects/c-/Multithreading"
 }
