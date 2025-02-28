@@ -26,7 +26,7 @@ void makeSound(Animal* animal) { // Pointer to base class
     animal->sound(); // Calls the overridden sound() function
 }
 
-int main() {
+int main(int argc, char **argv) {
     Dog dog;
     Cat cat;
 

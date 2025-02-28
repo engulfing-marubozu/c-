@@ -9,4 +9,5 @@ int main(){
     std::cout << "y: " << ns:: yi << std::endl;  
     ns::display();
     return 0;
+    printf("Hello World Rahul");
 }
