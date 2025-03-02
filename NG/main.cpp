@@ -1,22 +1,22 @@
 #include <atomic>
 #include <iostream>
 #include <mutex>
-#include <condition_variable>       // std::condition_variable
-#include <signal.h>                 // signal
-#include <sstream>                  // std::stringstream
-#include <boost/uuid/uuid_io.hpp>   // boost::uuids::to_string
+#include <condition_variable>     // std::condition_variable
+#include <signal.h>               // signal
+#include <sstream>                // std::stringstream
+#include <boost/uuid/uuid_io.hpp> // boost::uuids::to_string
 #include "./sdk/sdk_api.h"
 
 using namespace hgng_sdk;
 
-std::atomic<bool>       g_running{true};
-std::atomic<bool>       g_book_download_complete{false};
-std::mutex              g_mutex;
+std::atomic<bool> g_running{true};
+std::atomic<bool> g_book_download_complete{false};
+std::mutex g_mutex;
 std::condition_variable g_cv;
 
 class TestAlgo : public IMarketDataHandler, public IOrderEventsHandler
 {
-  public:
+public:
     explicit TestAlgo(InstrumentPtr instrument) : instrument_(instrument)
     {
         auto ss = std::stringstream{};
@@ -24,16 +24,17 @@ class TestAlgo : public IMarketDataHandler, public IOrderEventsHandler
         std::cout << "Instrument: " << ss.str() << std::endl;
 
         params_.account_id = 2467;
-        params_.user_id    = 1423;
-        params_.quantity   = 1;
+        params_.user_id = 1423;
+        params_.quantity = 1;
     }
 
     void StartAndWait()
     {
         std::cout << "Starting..." << std::endl;
-        signal(SIGINT, [](int) { g_running = false; }); // handle 'ctrl+c'
+        signal(SIGINT, [](int)
+               { g_running = false; });
 
-        order_           = CreateOrder(instrument_, this);
+        order_ = CreateOrder(instrument_, this);
         subscription_id_ = SubscribeFastAggregateDepth(instrument_, this);
 
         while (g_running)
@@ -55,7 +56,7 @@ class TestAlgo : public IMarketDataHandler, public IOrderEventsHandler
         }
     }
 
-  private:
+private:
     void SendNewOrAmend()
     {
         if (order_->IsPlaced())
@@ -82,7 +83,7 @@ class TestAlgo : public IMarketDataHandler, public IOrderEventsHandler
     {
         std::cout << "Unsubscribed " << handler_id << std::endl;
     }
-  void OnTrade(const TradeUpdate &trade) override final
+    void OnTrade(const TradeUpdate &trade) override final
     {
     }
 
@@ -90,20 +91,25 @@ class TestAlgo : public IMarketDataHandler, public IOrderEventsHandler
     {
         RWSpinLock::ReadHolder lock(&lock_);
 
-        if (params_.side == Order::Side::SIDE_SELL)
+        if (!initial_order_placed)
         {
-            if (price.ask_price)
+            if (params_.side == Order::Side::SIDE_SELL)
             {
-                params_.price = price.ask_price.value();
-                SendNewOrAmend();
+                if (price.ask_price)
+                {
+                    params_.price = price.ask_price.value();
+                    SendNewOrAmend();
+                    initial_order_placed = true;
+                }
             }
-        }
-        else
-        {
-            if (price.bid_price)
+            else
             {
-                params_.price = price.bid_price.value();
-                SendNewOrAmend();
+                if (price.bid_price)
+                {
+                    params_.price = price.bid_price.value();
+                    SendNewOrAmend();
+                    initial_order_placed = true;
+                }
             }
         }
     }
@@ -174,18 +180,19 @@ class TestAlgo : public IMarketDataHandler, public IOrderEventsHandler
         book_downloaded_successfully = false;
         g_cv.notify_one();
     }
-  void OnFastAggregateDepth(const FastAggregateDepthUpdate &depth) override final
+    void OnFastAggregateDepth(const FastAggregateDepthUpdate &depth) override final
     {
     }
-  public:
+
+public:
     bool book_downloaded_successfully{false};
 
-  private:
+private:
     OrderPtr order_;
     InstrumentPtr instrument_;
     OrderParams params_;
     uint64_t subscription_id_{0};
-    bool exit_order_ = false;
+    bool initial_order_placed{false}; 
     using RWSpinLock = folly::RWTicketSpinLockT<32, true>;
     RWSpinLock lock_;
 };
@@ -218,7 +225,8 @@ int main()
     {
         auto timeout = std::chrono::high_resolution_clock::now() + std::chrono::seconds(10);
         std::unique_lock<std::mutex> lock(g_mutex);
-        g_cv.wait_until(lock, timeout, []() { return g_book_download_complete.load(); });
+        g_cv.wait_until(lock, timeout, []()
+                        { return g_book_download_complete.load(); });
         if (!algo.book_downloaded_successfully)
         {
             std::cerr << "Order book download failed" << std::endl;
