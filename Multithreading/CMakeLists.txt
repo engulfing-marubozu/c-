@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20.0)
 
-project(Multithreading)
+project(cppNutsLecture1)
 
-add_executable(multithreading main.cpp)
+add_executable(cppNutsLecture1.cpp cppNutsLecture1.cpp)

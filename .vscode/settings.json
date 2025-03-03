@@ -80,7 +80,8 @@
         "any": "cpp",
         "charconv": "cpp",
         "coroutine": "cpp",
-        "source_location": "cpp"
+        "source_location": "cpp",
+        "ranges": "cpp"
     },
     "cmake.sourceDirectory": "/root/Projects/c-/Multithreading"
 }

@@ -1,0 +1,5 @@
+Upcasting 
+composition over inheritance
+friend function for consoling whole object
+
+
