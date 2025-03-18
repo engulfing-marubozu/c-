@@ -3,7 +3,7 @@
 #include <thread>
 Algo2::Algo2(int instrument) : _instrument(instrument) {}
 
-void Algo2::OnPriceUpdate(const nlohmann::json& jsonData) {
+void Algo2::OnPriceUpdate(PriceUpdate priceUpdate) {
     std::cout << "Algo 2" << std::hash<std::thread::id>{}(std::this_thread::get_id())<< " is running on Core " << sched_getcpu()  << std::endl;
 }
 

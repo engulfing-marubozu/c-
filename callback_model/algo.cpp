@@ -4,7 +4,7 @@
 #include <sched.h>  // For sched_getcpu()
 Algo::Algo(int instrument) : _instrument(instrument) {}
 
-void Algo::OnPriceUpdate(const nlohmann::json& jsonData) {
+void Algo::OnPriceUpdate(PriceUpdate priceUpdate) {
     std::cout << "Algo 1 " << std::hash<std::thread::id>{}(std::this_thread::get_id()) << " is running on Core " << sched_getcpu() << std::endl;
 }
 
