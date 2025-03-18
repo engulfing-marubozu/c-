@@ -173,4 +173,73 @@
 // if dataReady is true then it will not sleep and continue the execution
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------
-     
+//SUPERSCALING (one step better from hyperthreading) 😲
+// #include <iostream>
+// #include <thread>
+// #include <sched.h>  // For setting CPU affinity
+// #include <unistd.h> // For getting CPU count
+
+// void set_cpu_affinity(int core_id) {
+//     cpu_set_t cpuset;
+//     CPU_ZERO(&cpuset);
+//     CPU_SET(core_id, &cpuset);
+    
+//     int rc = sched_setaffinity(0, sizeof(cpu_set_t), &cpuset);
+//     if (rc != 0) {
+//         std::cerr << "Error setting CPU affinity\n";
+//     }
+// }
+
+// void alu_task() {
+//     set_cpu_affinity(0);  // Bind to core 2
+//     int x = 0;
+//     for (long long i = 0; i < 1e9; i++) {
+//         x += i % 2;  // ALU-heavy (Integer operations)
+//     }
+//     std::cout << "Alu Thread-> " << std::hash<std::thread::id>{}(std::this_thread::get_id())<< " is running on Core " << sched_getcpu()  << std::endl;
+//     std::cout << "ALU Task Done\n";
+// }
+
+// void fpu_task() {
+//     set_cpu_affinity(1);  // Bind to the same core 2
+//     double y = 0.0;
+//     for (long long i = 0; i < 1e9; i++) {
+//         y += 0.1 * i;  // FPU-heavy (Floating-point operations)
+//     }
+//     std::cout << "FPU THREAD-> " << std::hash<std::thread::id>{}(std::this_thread::get_id())<< " is running on Core " << sched_getcpu()  << std::endl;
+//     std::cout << "FPU Task Done\n";
+// }
+
+// int main() {
+//     std::thread t1(alu_task);
+//     std::thread t2(alu_task);
+//     t1.join();
+//     t2.join();
+// }
+
+// // 1. Superscalar processors can issue multiple instructions per cycle using different functional units (e.g., ALU, FPU, Load/Store).
+// // 2. If one thread uses ALU while the other thread uses FPU, both execution units operate in parallel, enabling overall CPU usage to exceed 100%.
+// // To test this, we need to pin the thread execution to a perticular logical core pair. 
+// // superscaling is the reason why cpu core pair usage exceeds 100% when seen using htop.
+// // [root@JPR-2YJCVQ3 c-]# lscpu --extended
+// // CPU SOCKET CORE L1d:L1i:L2:L3 ONLINE
+// //   0      0    0 0:0:0:0          yes
+// //   1      0    0 0:0:0:0          yes
+// //   2      0    1 1:1:1:0          yes
+// //   3      0    1 1:1:1:0          yes
+// //   4      0    2 2:2:2:0          yes
+// //   5      0    2 2:2:2:0          yes
+// //   6      0    3 3:3:3:0          yes
+// //   7      0    3 3:3:3:0          yes
+// //   8      0    4 4:4:4:0          yes
+// //   9      0    4 4:4:4:0          yes
+// //  10      0    5 5:5:5:0          yes
+// //  11      0    5 5:5:5:0          yes
+// //  12      0    6 6:6:6:0          yes
+// //  13      0    6 6:6:6:0          yes
+// //  14      0    7 7:7:7:0          yes
+// //  15      0    7 7:7:7:0          yes
+// //  16      0    8 8:8:8:0          yes
+// //  17      0    8 8:8:8:0          yes
+// //  18      0    9 9:9:9:0          yes
+// //  19      0    9 9:9:9:0          yes

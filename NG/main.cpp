@@ -23,8 +23,8 @@ public:
         ss << *instrument;
         std::cout << "Instrument: " << ss.str() << std::endl;
 
-        params_.account_id = 2467;
-        params_.user_id = 1423;
+        params_.account_id = 71;
+        params_.user_id = 192;
         params_.quantity = 1;
     }
 
@@ -35,7 +35,7 @@ public:
                { g_running = false; });
 
         order_ = CreateOrder(instrument_, this);
-        subscription_id_ = SubscribeFastAggregateDepth(instrument_, this);
+        subscription_id_ = SubscribePrices(instrument_, this);
 
         while (g_running)
         {

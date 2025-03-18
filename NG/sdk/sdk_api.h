@@ -201,7 +201,7 @@ namespace hgng_sdk
         return std::make_shared<Order>();
     }
 
-    inline uint64_t SubscribeFastAggregateDepth(InstrumentPtr, IMarketDataHandler *handler)
+    inline uint64_t SubscribePrices(InstrumentPtr, IMarketDataHandler *handler)
     {
         // Store the handler
         g_market_data_handler = handler;
