@@ -209,7 +209,6 @@ int main()
         if (s == "start")
             break;
     } while (true);
-
     auto instrument = GetInstrument(4975733391391290516u);
     if (!instrument)
     {
