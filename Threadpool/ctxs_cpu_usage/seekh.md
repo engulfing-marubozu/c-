@@ -39,7 +39,7 @@ int main(){
     return 0;
 }
 ```
-// this will consume all the threads
+ this will consume all the threads
 
 
 

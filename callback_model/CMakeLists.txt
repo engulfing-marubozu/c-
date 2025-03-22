@@ -4,5 +4,5 @@ project(NG)
 
 find_package(CURL REQUIRED)
 
-add_executable(main main.cpp ng_sdk.cpp algo.cpp algo2.cpp)
-target_link_libraries(main CURL::libcurl)
+add_executable(callback_model callback_model.cpp ng_sdk.cpp algo.cpp algo2.cpp)
+target_link_libraries(callback_model CURL::libcurl)
