@@ -48,12 +48,14 @@ class Threadpool {
 class ng_sdk {
 public:
     ng_sdk(int poolSize);
-    void Subscribe(int instrument, IMarketDataHandler* subscriber);
+    void Subscribe(long long int instrument, IMarketDataHandler* subscriber);
     void publish(PriceUpdate PriceUpdate);
     void handleOrderUpdate(PriceUpdate PriceUpdate);
     void priceEvent(long long int instr_id, std::string instr_name, float bid_price, float ask_price);
+    bool hasSubscribers(long long int instrument);
 private:
     int cnt = 0;
-    std::unordered_map<int, std::vector<IMarketDataHandler*>> instrument_subscribers_list;
+    std::unordered_map<long long int, std::vector<IMarketDataHandler*>> instrument_subscribers_list;
     std::unique_ptr<Threadpool> pool;
+    std::mutex subscribers_mutex;
 };

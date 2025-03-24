@@ -56,9 +56,15 @@ void Threadpool::pushPriceToStream(PriceUpdate priceUpdate) {
     cv.notify_one();
 }
 
-void ng_sdk::Subscribe(int instrument, IMarketDataHandler* subscriber) {
+void ng_sdk::Subscribe(long long int instrument, IMarketDataHandler* subscriber) {
+    std::lock_guard<std::mutex> lock(subscribers_mutex);
     std::cout << "Subscribed instrument " << instrument << std::endl;
     instrument_subscribers_list[instrument].push_back(subscriber);
+}
+
+bool ng_sdk::hasSubscribers(long long int instrument) {
+    std::lock_guard<std::mutex> lock(subscribers_mutex);
+    return !instrument_subscribers_list[instrument].empty();
 }
 
 void ng_sdk::handleOrderUpdate(PriceUpdate priceUpdate) {
@@ -71,12 +77,14 @@ void ng_sdk::priceEvent(long long int instr_id, std::string instr_name, float bi
 }
 
 void ng_sdk::publish(PriceUpdate priceUpdate) {
-    for (auto& pair : instrument_subscribers_list) {
-        if (cnt % pair.first == 0) {
-            std::cout << "publishing to Algo " << pair.first << std::endl;
-            for (auto& subscriber : pair.second) {
-                subscriber->OnPriceUpdate(priceUpdate);
-            }
+    long long int instrument_id = priceUpdate.instrument_id;
+    std::lock_guard<std::mutex> lock(subscribers_mutex);
+    if (instrument_subscribers_list.find(instrument_id) != instrument_subscribers_list.end()) {
+        std::vector<IMarketDataHandler*> SubscribersArray = instrument_subscribers_list[instrument_id];
+        for (auto it : SubscribersArray) {
+            it->OnPriceUpdate(priceUpdate);
         }
+    } else {
+        std::cout << "No subscribers for instrument ID: " << instrument_id << std::endl;
     }
 }

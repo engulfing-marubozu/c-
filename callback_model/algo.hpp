@@ -3,10 +3,10 @@
 
 class Algo : public IMarketDataHandler {
 public:
-    Algo(int instrument);
+    Algo(long long int instrument);
     void OnPriceUpdate(PriceUpdate priceUpdate) override final;
     void start(ng_sdk& sdk_api);
 
 private:
-    int _instrument;
+    long long int _instrument;
 };
